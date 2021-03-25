@@ -1,15 +1,11 @@
 package br.com.luan.pedidos.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Categoria implements Serializable {
+public class Cidade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -17,17 +13,17 @@ public class Categoria implements Serializable {
     private Integer id;
     private String nome;
 
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "categorias")
-    private List<Produto> produtos = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name="estado_id")
+    private Estado estado;
 
-    public Categoria() {
-        super();
+    public Cidade() {
     }
 
-    public Categoria(Integer id, String nome) {
+    public Cidade(Integer id, String nome, Estado estado) {
         this.id = id;
         this.nome = nome;
+        this.estado = estado;
     }
 
     public Integer getId() {
@@ -46,20 +42,20 @@ public class Categoria implements Serializable {
         this.nome = nome;
     }
 
-    public List<Produto> getProdutos() {
-        return produtos;
+    public Estado getEstado() {
+        return estado;
     }
 
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Categoria categoria = (Categoria) o;
-        return Objects.equals(id, categoria.id);
+        Cidade cidade = (Cidade) o;
+        return Objects.equals(id, cidade.id);
     }
 
     @Override
@@ -67,5 +63,3 @@ public class Categoria implements Serializable {
         return Objects.hash(id);
     }
 }
-
-
