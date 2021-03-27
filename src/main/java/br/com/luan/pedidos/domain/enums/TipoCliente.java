@@ -5,32 +5,32 @@ public enum TipoCliente {
     PESSOAFISICA(1, "Pessoa Física"),
     PESSOAJURIDICA(2, "Pessoa Jurídica");
 
-    private int cod;
+    private int codigo;
     private String descricao;
 
-    private TipoCliente(int cod, String descricao) {
-        this.cod = cod;
+    private TipoCliente(int codigo, String descricao) {
+        this.codigo = codigo;
         this.descricao = descricao;
     }
 
-    public int getCod() {
-        return cod;
+    public int getCodigo() {
+        return codigo;
     }
 
     public String getDescricao() {
         return descricao;
     }
 
-    public static TipoCliente toEnum(Integer cod) {
-        if (cod == null) {
+    public static TipoCliente toEnum(Integer codigo) {
+        if (codigo == null) {
             return null;
         }
 
         for (TipoCliente x : TipoCliente.values()) { //for TipoCliente x percorre todos os enums do tipo TipoCliente
-            if (cod.equals(x.getCod())) {
+            if (codigo.equals(x.getCodigo())) {
                 return x;
             }
         }
-        throw new IllegalArgumentException("ID Inválido: " + cod);
+        throw new IllegalArgumentException("ID Inválido: " + codigo);
     }
 }
