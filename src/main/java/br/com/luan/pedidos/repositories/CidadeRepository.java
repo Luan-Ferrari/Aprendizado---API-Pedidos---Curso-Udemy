@@ -1,4 +1,4 @@
-package br.com.luan.pedidos.repositories.exceptions;
+package br.com.luan.pedidos.repositories;
 
 import br.com.luan.pedidos.domain.Cidade;
 import org.springframework.data.jpa.repository.JpaRepository;

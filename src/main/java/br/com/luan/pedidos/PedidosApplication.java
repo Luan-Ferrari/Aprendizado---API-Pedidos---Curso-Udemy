@@ -1,18 +1,12 @@
 package br.com.luan.pedidos;
 
-import br.com.luan.pedidos.domain.Categoria;
-import br.com.luan.pedidos.domain.Cidade;
-import br.com.luan.pedidos.domain.Estado;
-import br.com.luan.pedidos.domain.Produto;
-import br.com.luan.pedidos.repositories.CategoriaRepository;
-import br.com.luan.pedidos.repositories.ProdutoRepository;
-import br.com.luan.pedidos.repositories.exceptions.CidadeRepository;
-import br.com.luan.pedidos.repositories.exceptions.EstadoRepository;
+import br.com.luan.pedidos.domain.*;
+import br.com.luan.pedidos.domain.enums.TipoCliente;
+import br.com.luan.pedidos.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
@@ -33,6 +27,10 @@ public class PedidosApplication extends SpringBootServletInitializer implements 
 	private CidadeRepository cidadeRepository;
 	@Autowired
 	private EstadoRepository estadoRepository;
+	@Autowired
+	private ClienteRepository clienteRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PedidosApplication.class, args);
@@ -80,9 +78,26 @@ public class PedidosApplication extends SpringBootServletInitializer implements 
 		est1.getCidades().addAll(Arrays.asList(c1));
 		est2.getCidades().addAll(Arrays.asList(c2, c3));
 
-		//para persistir no banco de dados as categorias e os produtos
+		//para persistir no banco de dados os estados e as cidades
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
+
+		//criando o cliente
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+
+		//preenchendo a lista de telefones do cliente
+		cli1.getTelefones().addAll(Arrays.asList("237363323", "93838398"));
+
+		//criando os enderecos do cliente
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "382200834", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+
+		//preenchendo a lista de enderecos do cliente
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+
+		//para persistir no banco de dados o cliente e os enderecos
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 
 
 	}
