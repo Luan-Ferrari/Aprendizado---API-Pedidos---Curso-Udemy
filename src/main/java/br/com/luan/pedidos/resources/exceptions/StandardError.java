@@ -1,4 +1,4 @@
-package br.com.luan.pedidos.repositories.exceptions;
+package br.com.luan.pedidos.resources.exceptions;
 
 import java.io.Serializable;
 
