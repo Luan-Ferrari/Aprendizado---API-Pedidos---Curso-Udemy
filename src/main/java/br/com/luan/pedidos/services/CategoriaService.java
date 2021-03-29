@@ -19,4 +19,9 @@ public class CategoriaService {
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
     }
+
+    public Categoria insert(Categoria obj) {
+        obj.setId(null); //aqui o null serve para garantir que seja criado um novo objeto, se o Id vim preenchido ele atualiza e não cria um novo
+        return repository.save(obj);
+    }
 }
