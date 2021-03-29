@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,10 @@ public class CategoriaService {
 
     @Autowired
     private CategoriaRepository repository;
+
+    public List<Categoria> findAll() {
+        return repository.findAll();
+    }
 
     public Categoria find(Integer id) {
         Optional<Categoria> obj = repository.findById(id);
