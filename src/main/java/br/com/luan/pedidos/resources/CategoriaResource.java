@@ -4,6 +4,7 @@ import br.com.luan.pedidos.domain.Categoria;
 import br.com.luan.pedidos.dto.CategoriaDTO;
 import br.com.luan.pedidos.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +24,22 @@ public class CategoriaResource {
     public ResponseEntity<List<CategoriaDTO>> findAll() {
         List<Categoria> list = service.findAll();
         List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    //para usar /categorias/page?linesPerPage=3&page=3&orderBy=id&direction=DESC
+    //alem da lista, esse método tras diversas informações uteis ao front end no body da resposta, como: se é
+    //a última pagina, quantos objetos existem no total no banco de dados, quanto estao sendo mostrados por pagina,
+    //e muitos outros. Essas informações vem do objeto Page, que é tipo uma List, porem com mais recursos e com Java 8 compliance,
+    //propria para esse objetivo de paginacoes.
+    @GetMapping("/page")
+    public ResponseEntity<Page<CategoriaDTO>> findPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page, //dessa forma, com o @RequestParam, o atributo se torna opcional, porque tem um valor padrao
+            @RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage, //sugestao 24, pois é multiplo de 1,2,3 e 4, ficam facil de fazer layout responsivo depois
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction, //ASC ascendente ou DESC descendente
+            @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy) {
+        Page<Categoria> list = service.findPage(page, linesPerPage, direction, orderBy);
+        Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO(obj)); //por ser Java 8 Compliance, a conversão entre listas do objeto Page exige menos coisa que uma List
         return ResponseEntity.ok().body(listDto);
     }
 

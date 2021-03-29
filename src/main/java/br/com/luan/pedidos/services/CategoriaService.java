@@ -6,6 +6,9 @@ import br.com.luan.pedidos.services.exceptions.DataIntegrityException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
@@ -20,6 +23,12 @@ public class CategoriaService {
 
     public List<Categoria> findAll() {
         return repository.findAll();
+    }
+
+    //metodo para pesquisar com paginacao, ele recebe o numero da pagina(inicia com 0), quantas linhas por pagina, a direcao e os argumentos de pesquisa
+    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return repository.findAll(pageRequest);
     }
 
     public Categoria find(Integer id) {
