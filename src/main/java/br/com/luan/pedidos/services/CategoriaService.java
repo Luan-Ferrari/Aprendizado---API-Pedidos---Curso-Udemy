@@ -1,6 +1,7 @@
 package br.com.luan.pedidos.services;
 
 import br.com.luan.pedidos.domain.Categoria;
+import br.com.luan.pedidos.dto.CategoriaDTO;
 import br.com.luan.pedidos.repositories.CategoriaRepository;
 import br.com.luan.pedidos.services.exceptions.DataIntegrityException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
@@ -55,6 +56,14 @@ public class CategoriaService {
             throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
         } //esse try catch é necessário porque da um erro de integridade se tentar excluir uma categoria que possui produtos
         //quando isso ocorre existem duas saidas, ou apaga os produtos também, ou retorna uma exception e aborta o delete.
+    }
+
+    //metodo auxiliar para converter o DTO recebido no método POST e PUT em uma Categoria do domain.
+    //Precisa disso pois as validacoes estão sendo feitas nas classes DTO, então quando recebemos um
+    //POST ou PUT devemos ter um objeto DTO para validar, mas na hora de persistir os dados precisamos
+    //de um objeto do pacote Domain
+    public Categoria fromDTO(CategoriaDTO objDto) {
+        return new Categoria(objDto.getId(), objDto.getNome());
     }
 
 }
