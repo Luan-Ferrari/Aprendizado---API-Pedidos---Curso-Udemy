@@ -2,9 +2,10 @@ package br.com.luan.pedidos.resources.exceptions;
 
 import br.com.luan.pedidos.services.exceptions.DataIntegrityException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -29,4 +30,17 @@ public class ResourceExceptionHandler {
         StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
+
+    //AQUI COMO INSTANCIAMOS UM OBJETO DO TIPO ValidationError, PODEMOS PERCORRER A LISTA DE ERROS GERADA NA
+    //RESPOSTA PADRÃO DA EXCEPTION MethodArgumentNotValidException E CRIAR UMA LISTA PARA RETORNAR NA NOSSA
+    //RESPOSTA PERSONALIZADA
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request){
+        ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Erro de Validação", System.currentTimeMillis());
+        for(FieldError x : e.getBindingResult().getFieldErrors()) {
+            err.addError(x.getField(), x.getDefaultMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
 }
