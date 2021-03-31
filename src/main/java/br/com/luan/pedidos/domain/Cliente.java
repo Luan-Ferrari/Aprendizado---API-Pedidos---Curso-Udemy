@@ -38,8 +38,7 @@ public class Cliente implements Serializable {
         this.nome = nome;
         this.email = email;
         this.cpfOuCnpj = cpfOuCnpj;
-        this.tipo = (tipo==null) ? null : tipo.getCodigo(); //ISSO AQUI ESTÁ CONFUSO, FOI FEITO ASSIM
-                                                            //POR CAUSA DO MÉTODO fromDTO do ClienteService
+        this.tipo = (tipo==null) ? null : tipo.getCodigo(); //Isso é necessário quando tem Enum e usa um GetCodigo para buscar o codigo
     }
 
     public Integer getId() {

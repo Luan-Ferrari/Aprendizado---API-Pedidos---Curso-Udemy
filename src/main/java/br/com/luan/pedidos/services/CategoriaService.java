@@ -44,8 +44,9 @@ public class CategoriaService {
     }
 
     public Categoria update(Categoria obj) {
-        find(obj.getId()); //não é obrigatório, aqui chama o método find acima para ver se o Id existe, se não existir já retorna a exception de que não existe
-        return repository.save(obj);
+        Categoria newObj = find(obj.getId());
+        updateData(newObj, obj);
+        return repository.save(newObj);
     }
 
     public void delete(Integer id) {
@@ -66,4 +67,7 @@ public class CategoriaService {
         return new Categoria(objDto.getId(), objDto.getNome());
     }
 
+    private void updateData(Categoria newObj, Categoria obj) {
+        newObj.setNome(obj.getNome());
+    }
 }
