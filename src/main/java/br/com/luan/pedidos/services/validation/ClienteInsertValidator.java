@@ -1,9 +1,12 @@
 package br.com.luan.pedidos.services.validation;
 
+import br.com.luan.pedidos.domain.Cliente;
 import br.com.luan.pedidos.domain.enums.TipoCliente;
 import br.com.luan.pedidos.dto.ClienteNewDTO;
+import br.com.luan.pedidos.repositories.ClienteRepository;
 import br.com.luan.pedidos.resources.exceptions.FieldMessage;
 import br.com.luan.pedidos.services.validation.utils.BR;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,6 +16,9 @@ import java.util.List;
 //TODA A IMPLEMENTAÇAO DESSA CLASSE TAMBÉM É PADRÃO PARA USAR NO BEAN VALIDATION
 //NO MATERIAL DE APOIO TEM UM CHECKLIST QUE DEVE SER SEGUIDO PARA CRIAR ESSAS VALIDACOES PERSONALIZADAS
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
+
+    @Autowired
+    private ClienteRepository repository;
 
     @Override
     public void initialize(ClienteInsert ann){
@@ -28,6 +34,14 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
         }
         if(objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCodigo()) && !BR.isValidTfn(objDto.getCpfOuCnpj())) {
             list.add(new FieldMessage("cpfOuCnpj", "CNPJ Inválido"));
+        }
+
+        //VALIDA SE O EMAIL É UNICO NO BANCO DE DADOS, PARA ISSO PODERIAMOS FAZER UM @Column(unique=true)
+        //NO CAMPO email DA CLASSE DO DOMAIN, POREM TERIAMOS MENOS CONTROLE SOBRE A MENSAGEM DE ERRO A SER RETORNADA
+        //PORQUE DAI QUEM LANCARIA O ERRO SERIA A JPA.
+        Cliente aux = repository.findByEmail(objDto.getEmail());
+        if (aux != null){
+            list.add(new FieldMessage("email", "E-mail já cadastrado"));
         }
         //AQUI TERMINA A LÓGICA DA VALIDAÇÃO
 
