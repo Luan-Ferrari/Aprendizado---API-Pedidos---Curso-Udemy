@@ -39,6 +39,17 @@ public class Pedido implements Serializable {
         this.enderecoDeEntrega = enderecoDeEntrega;
     }
 
+    //cada classe é responsabel por saber e fazer as operacoes que tem relacao com ela, por exemplo, o total
+    //do pedido é calculado na classe Pedido do domain, mas o total do subtotal de cada item é feito na classe
+    //ItemPedido do domain.
+    public double getValorTotal() {
+        double soma = 0.0;
+        for (ItemPedido ip : itens) {
+            soma = soma + ip.getSubTotal();
+        }
+        return soma;
+    }
+
     public Integer getId() {
         return id;
     }
