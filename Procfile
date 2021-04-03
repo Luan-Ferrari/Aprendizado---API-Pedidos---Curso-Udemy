@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -Dspring.profiles.active=prod $WEBAPP_RUNNER_OPTS -war target/pedidos.war
