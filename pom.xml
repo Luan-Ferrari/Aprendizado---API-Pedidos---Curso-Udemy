@@ -13,7 +13,6 @@
 	<groupId>br.com.luan</groupId>
 	<artifactId>pedidos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>pedidos</name>
 	<description>Teste de API de Pedidos</description>
 
