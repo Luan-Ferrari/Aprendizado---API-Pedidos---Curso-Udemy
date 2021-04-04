@@ -29,11 +29,12 @@ public class PedidoService {
     private ProdutoService produtoService;
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
+    @Autowired
+    private ClienteService clienteService;
 
 
     public Pedido find(Integer id) {
         Optional<Pedido> obj = repository.findById(id);
-        System.out.println("Cheguei aqui");
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não Encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
     }
@@ -42,6 +43,7 @@ public class PedidoService {
     public Pedido insert(Pedido obj) {
         obj.setId(null);
         obj.setInstante(new Date());
+        obj.setCliente(clienteService.find(obj.getCliente().getId()));
 
         obj.getPagamento().setEstadoPagto(EstadoPagamento.PENDENTE);
         obj.getPagamento().setPedido(obj);
@@ -55,11 +57,42 @@ public class PedidoService {
 
         for (ItemPedido ip : obj.getItens()) {
             ip.setDesconto(0.0);
-            ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
+            ip.setProduto(produtoService.find(ip.getProduto().getId()));
+            ip.setPreco(ip.getProduto().getPreco());
             System.out.println(ip.getPreco());
             ip.setPedido(obj);
         }
         itemPedidoRepository.saveAll(obj.getItens());
+        System.out.println(obj);
         return obj;
     }
+
+//    Somente para salvar o pedido, esse bloco de código abaixo é o suficiente. O bloco acima é o mesmo desse
+//    de baixo, porem no de cima buscamos o cliente e os itens no banco de dados para podermos preencher um
+//    método toString onde aparece o nome do cliente e o nome do produto. Esse método é utilizado para disparar
+//            um e-mail com os dados do pedido.
+//    @Transactional
+//    public Pedido insert(Pedido obj) {
+//        obj.setId(null);
+//        obj.setInstante(new Date());
+//
+//        obj.getPagamento().setEstadoPagto(EstadoPagamento.PENDENTE);
+//        obj.getPagamento().setPedido(obj);
+//        if (obj.getPagamento() instanceof PagamentoComBoleto) {
+//            PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
+//            boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
+//        }
+//
+//        obj = repository.save(obj);
+//        pagamentoRepository.save(obj.getPagamento());
+//
+//        for (ItemPedido ip : obj.getItens()) {
+//            ip.setDesconto(0.0);
+//            ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
+//            System.out.println(ip.getPreco());
+//            ip.setPedido(obj);
+//        }
+//        itemPedidoRepository.saveAll(obj.getItens());
+//        return obj;
+//    }
 }
