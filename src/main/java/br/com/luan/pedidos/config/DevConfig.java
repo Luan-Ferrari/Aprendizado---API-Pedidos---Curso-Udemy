@@ -1,6 +1,8 @@
 package br.com.luan.pedidos.config;
 
 import br.com.luan.pedidos.services.DBService;
+import br.com.luan.pedidos.services.EmailService;
+import br.com.luan.pedidos.services.SmtpEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,5 +34,10 @@ public class DevConfig {
 
         dbService.instanciateTestDatabase();
         return true;
+    }
+
+    @Bean
+    public EmailService emailService() {
+        return new SmtpEmailService();
     }
 }
