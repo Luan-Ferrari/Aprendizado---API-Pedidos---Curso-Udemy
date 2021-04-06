@@ -28,6 +28,7 @@ public class TestConfig {
     //então, quando injetamos alguma coisa relacionada a emailService em outra classe, o Spring vem aqui
     // buscar esse método para usá-lo, neste caso, esse método foi criado na classe TestConfig, pois assim
     // ele só será chamado se estivermos no profile de test.
+
     @Bean
     public EmailService emailService() {
         return new MockEmailService();
