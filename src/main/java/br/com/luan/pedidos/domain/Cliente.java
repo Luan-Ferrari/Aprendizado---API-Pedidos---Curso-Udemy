@@ -1,11 +1,13 @@
 package br.com.luan.pedidos.domain;
 
+import br.com.luan.pedidos.domain.enums.Perfil;
 import br.com.luan.pedidos.domain.enums.TipoCliente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Cliente implements Serializable {
@@ -18,6 +20,10 @@ public class Cliente implements Serializable {
     private String email;
     private String cpfOuCnpj;
     private Integer tipo;
+
+    @ElementCollection(fetch=FetchType.EAGER) // necessario essa anotacao para garantir que sempre retorne os perfis na busca
+    @CollectionTable(name = "PERFIS")
+    private Set<Integer> perfis = new HashSet<>();
 
     @JsonIgnore
     private String senha;
@@ -34,6 +40,7 @@ public class Cliente implements Serializable {
     private List<Pedido> pedidos = new ArrayList<>();
 
     public Cliente() {
+        addPerfil(Perfil.CLIENTE); //add isso nos contrutor, torna isso padrao para todas as instancias
     }
 
     public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
@@ -43,6 +50,7 @@ public class Cliente implements Serializable {
         this.cpfOuCnpj = cpfOuCnpj;
         this.tipo = (tipo==null) ? null : tipo.getCodigo(); //Isso é necessário quando tem Enum e usa um GetCodigo para buscar o codigo
         this.senha = senha;
+        addPerfil(Perfil.CLIENTE);
     }
 
     public Integer getId() {
@@ -88,6 +96,14 @@ public class Cliente implements Serializable {
     public String getSenha() { return senha; }
 
     public void setSenha(String senha) { this.senha = senha; }
+
+    public Set<Perfil> getPerfil() {
+        return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
+    }
+
+    public void addPerfil(Perfil perfil) {
+        perfis.add(perfil.getCodigo());
+    }
 
     public List<Endereco> getEnderecos() {
         return enderecos;
