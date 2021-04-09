@@ -5,6 +5,7 @@ import br.com.luan.pedidos.domain.enums.EstadoPagamento;
 import br.com.luan.pedidos.domain.enums.TipoCliente;
 import br.com.luan.pedidos.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -36,6 +37,8 @@ public class DBService {
     private PagamentoRepository pagamentoRepository;
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public void instanciateTestDatabase() throws ParseException {
 
@@ -105,7 +108,7 @@ public class DBService {
         cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 
         //criando o cliente
-        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, passwordEncoder.encode("batata"));
 
         //preenchendo a lista de telefones do cliente
         cli1.getTelefones().addAll(Arrays.asList("237363323", "93838398"));
