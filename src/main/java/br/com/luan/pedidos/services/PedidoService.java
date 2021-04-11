@@ -1,5 +1,6 @@
 package br.com.luan.pedidos.services;
 
+import br.com.luan.pedidos.domain.Cliente;
 import br.com.luan.pedidos.domain.ItemPedido;
 import br.com.luan.pedidos.domain.PagamentoComBoleto;
 import br.com.luan.pedidos.domain.Pedido;
@@ -7,9 +8,13 @@ import br.com.luan.pedidos.domain.enums.EstadoPagamento;
 import br.com.luan.pedidos.repositories.ItemPedidoRepository;
 import br.com.luan.pedidos.repositories.PagamentoRepository;
 import br.com.luan.pedidos.repositories.PedidoRepository;
-import br.com.luan.pedidos.repositories.ProdutoRepository;
+import br.com.luan.pedidos.security.UserSS;
+import br.com.luan.pedidos.services.exceptions.AuthorizationException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +44,17 @@ public class PedidoService {
         Optional<Pedido> obj = repository.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não Encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
+    }
+
+    public Page<Pedido> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
+        UserSS user = UserService.authenticated();
+        if (user == null) {
+            throw new AuthorizationException("Acesso negado");
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        Cliente cliente = clienteService.find(user.getId());
+        return repository.findByCliente(cliente, pageRequest);
     }
 
     @Transactional
