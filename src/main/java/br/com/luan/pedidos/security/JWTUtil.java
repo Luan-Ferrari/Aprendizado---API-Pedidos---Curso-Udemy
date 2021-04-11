@@ -1,5 +1,6 @@
 package br.com.luan.pedidos.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,5 +25,36 @@ public class JWTUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
+    }
+
+    public boolean tokenValido(String token) {
+        Claims claims = getClaims(token);
+        if (claims != null) {
+            String username = claims.getSubject(); //funcao do Claims que retorna o usuario
+            Date expirationDate = claims.getExpiration();
+            Date now = new Date(System.currentTimeMillis());
+
+            if(username != null && expirationDate != null && now.before(expirationDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getUsername(String token) {
+        Claims claims = getClaims(token);
+        if (claims != null) {
+            return claims.getSubject();
+        }
+        return null;
+    }
+
+    //essa é a funcao que recupera os Claims (quem é o usuario, prazo de expiraaco, etc) a partir de um token
+    private Claims getClaims(String token) {
+        try {
+            return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            return null; //retorna nulo caso o token nao seja valido e nao possa ser verificado
+        }
     }
 }

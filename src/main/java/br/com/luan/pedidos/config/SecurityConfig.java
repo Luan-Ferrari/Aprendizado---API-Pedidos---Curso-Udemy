@@ -1,6 +1,7 @@
 package br.com.luan.pedidos.config;
 
 import br.com.luan.pedidos.security.JWTAuthenticationFilter;
+import br.com.luan.pedidos.security.JWTAutorizationFilter;
 import br.com.luan.pedidos.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUBLIC_MATCHERS).permitAll()
                 .anyRequest().authenticated();
         http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil)); //adicionamos o filtro que foi criado no package security (todas as classes)
+        http.addFilter(new JWTAutorizationFilter(authenticationManager(), jwtUtil, userDetailsService)); //filtro de autorizacao
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //aqui asseguramos que o back end não irá criar sessão de usuário
     }
 
