@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //só de adiconar as dependcias do spring security e do jsontoken, todas as URLs já foram bloqueadas.
     //aqui nesta lista iremos informar as URLs que queremos que sejam liberadas, que não irão exigir autenticacao
     private static final String[] PUBLIC_MATCHERS = {
-            "/h2-console/**",
+            "/h2-console/**"
     };
 
     //caminhos que serão somente leitura, ou seja, não permitirão alterações
@@ -51,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //caminhos que só são permitidos para o POST (por exemplo um usuario nao logado poder se cadastrar)
     private static final String[] PUBLIC_MATCHERS_POST = {
-            "/clientes/**"
+            "/clientes/**",
+            "/auth/forgot/**"
     };
 
     //aqui dizemos que as URLs da lista PUBLIC_MATCHERS serão liberadas e que para todo o resto precisa autenticar

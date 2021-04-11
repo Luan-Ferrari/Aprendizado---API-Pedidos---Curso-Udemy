@@ -1,5 +1,6 @@
 package br.com.luan.pedidos.services;
 
+import br.com.luan.pedidos.domain.Cliente;
 import br.com.luan.pedidos.domain.Pedido;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -15,4 +16,6 @@ public interface EmailService { //interface para por der o smtp do google e o mo
     void sendOrderConfirmationHtmlEmail(Pedido obj);
 
     void sendHtmlEmail(MimeMessage msg); // MimeMessage é do Spring, serve para enviar Email com HTML
+
+    void sendNewPasswordEmail(Cliente cliente, String newPass);
 }

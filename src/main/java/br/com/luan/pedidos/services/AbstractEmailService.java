@@ -1,5 +1,6 @@
 package br.com.luan.pedidos.services;
 
+import br.com.luan.pedidos.domain.Cliente;
 import br.com.luan.pedidos.domain.Pedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.swing.*;
 import java.util.Date;
 
 public abstract class AbstractEmailService implements EmailService {
@@ -76,6 +78,22 @@ public abstract class AbstractEmailService implements EmailService {
         Context context = new Context(); //esse Context é do Thymeleaf e serve para popular o HTML
         context.setVariable("pedido", obj);
         return templateEngine.process("email/confirmacaoPedido", context); //por padrao o Thymeleaf busca dentro da pasta resources/templates
+    }
+
+    @Override
+    public void sendNewPasswordEmail(Cliente cliente, String newPass) {
+        SimpleMailMessage sm = prepareNewPasswordEmail(cliente, newPass);
+        sendEmail(sm);
+    }
+
+    protected SimpleMailMessage prepareNewPasswordEmail(Cliente cliente, String newPass) {
+        SimpleMailMessage sm = new SimpleMailMessage();
+        sm.setTo(cliente.getEmail());
+        sm.setFrom(sender);
+        sm.setSubject("Solicitação de nova senha");
+        sm.setSentDate(new Date(System.currentTimeMillis()));
+        sm.setText("Nova senha: " + newPass);
+        return sm;
     }
 
 
