@@ -3,11 +3,14 @@ package br.com.luan.pedidos.services;
 import br.com.luan.pedidos.domain.Cidade;
 import br.com.luan.pedidos.domain.Cliente;
 import br.com.luan.pedidos.domain.Endereco;
+import br.com.luan.pedidos.domain.enums.Perfil;
 import br.com.luan.pedidos.domain.enums.TipoCliente;
 import br.com.luan.pedidos.dto.ClienteDTO;
 import br.com.luan.pedidos.dto.ClienteNewDTO;
 import br.com.luan.pedidos.repositories.ClienteRepository;
 import br.com.luan.pedidos.repositories.EnderecoRepository;
+import br.com.luan.pedidos.security.UserSS;
+import br.com.luan.pedidos.services.exceptions.AuthorizationException;
 import br.com.luan.pedidos.services.exceptions.DataIntegrityException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,12 @@ public class ClienteService {
     }
 
     public Cliente find(Integer id) {
+
+        UserSS user = UserService.authenticated();
+        if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+            throw new AuthorizationException("Acesso Negado");
+        }
+
         Optional<Cliente> obj = repository.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não Encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));

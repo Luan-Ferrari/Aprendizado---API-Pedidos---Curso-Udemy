@@ -1,5 +1,6 @@
 package br.com.luan.pedidos.resources.exceptions;
 
+import br.com.luan.pedidos.services.exceptions.AuthorizationException;
 import br.com.luan.pedidos.services.exceptions.DataIntegrityException;
 import br.com.luan.pedidos.services.exceptions.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -43,4 +44,11 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
+    //para tratar exceção de usuario só poder consultar a si mesmo quando o usuario que consulta nao é ele mesmo ou não é admin
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<StandardError> authorization(AuthorizationException e, HttpServletRequest request) {
+
+        StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
+    }
 }
