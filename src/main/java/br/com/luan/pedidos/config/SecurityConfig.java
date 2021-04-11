@@ -1,14 +1,18 @@
 package br.com.luan.pedidos.config;
 
+import br.com.luan.pedidos.security.JWTAuthenticationFilter;
+import br.com.luan.pedidos.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,6 +27,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //esse Environment precisa para liberar o acesso ao banco H2, mais o if no método configure
     @Autowired
     private Environment env;
+
+    @Autowired
+    private UserDetailsService userDetailsService; //injetar a interface que o Spring se vira encontrar a implementacao
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     //só de adiconar as dependcias do spring security e do jsontoken, todas as URLs já foram bloqueadas.
     //aqui nesta lista iremos informar as URLs que queremos que sejam liberadas, que não irão exigir autenticacao
@@ -50,7 +60,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
                 .antMatchers(PUBLIC_MATCHERS).permitAll()
                 .anyRequest().authenticated();
+        http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //aqui asseguramos que o back end não irá criar sessão de usuário
+    }
+
+    //esse metodo é uma sobrecarga do de cima, ele é bem padrão, serve para mostrar onde buscar o usuario e onde esta o encriptador da senha
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     //aqui permitimos acesso aos endpoints por multiplas fontes usando as cofiguracoes basicas(applyPermitDefaultValues)
