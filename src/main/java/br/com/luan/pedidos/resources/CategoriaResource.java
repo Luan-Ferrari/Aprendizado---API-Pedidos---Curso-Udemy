@@ -6,6 +6,7 @@ import br.com.luan.pedidos.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -50,6 +51,7 @@ public class CategoriaResource {
         return ResponseEntity.ok().body(obj);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) { //@RequestBody transforma o objeto Json em objeto Java
         Categoria obj = service.fromDTO(objDto);
@@ -62,6 +64,7 @@ public class CategoriaResource {
         return ResponseEntity.created(uri).build(); // o .created define qual codigo HTTP vai ser retornado, neste caso 201
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id) {
         Categoria obj = service.fromDTO(objDto);
@@ -70,6 +73,7 @@ public class CategoriaResource {
         return ResponseEntity.noContent().build(); // o .noContent define qual codigo HTTP vai ser retornado, neste caso 204
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')") //para isso funcionar precisa ter a anotacao no SecurityConfig também
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
