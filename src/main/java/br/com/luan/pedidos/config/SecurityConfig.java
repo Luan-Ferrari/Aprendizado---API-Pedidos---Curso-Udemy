@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
                 .antMatchers(PUBLIC_MATCHERS).permitAll()
                 .anyRequest().authenticated();
-        http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+        http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil)); //adicionamos o filtro que foi criado no package security (todas as classes)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //aqui asseguramos que o back end não irá criar sessão de usuário
     }
 
