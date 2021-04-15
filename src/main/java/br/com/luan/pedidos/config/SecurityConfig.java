@@ -51,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //caminhos que só são permitidos para o POST (por exemplo um usuario nao logado poder se cadastrar)
     private static final String[] PUBLIC_MATCHERS_POST = {
-            "/clientes/**",
+            "/clientes",
+            "/clientes/picture",
             "/auth/forgot/**"
     };
 
