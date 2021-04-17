@@ -46,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //caminhos que serão somente leitura, ou seja, não permitirão alterações
     private static final String[] PUBLIC_MATCHERS_GET = {
             "/produtos/**",
-            "/categorias/**"
+            "/categorias/**",
+            "/estados/**"
     };
 
     //caminhos que só são permitidos para o POST (por exemplo um usuario nao logado poder se cadastrar)
